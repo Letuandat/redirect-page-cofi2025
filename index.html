@@ -4,14 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đang chuyển hướng...</title>
-    <meta http-equiv="refresh" content="0;url=https://script.google.com/macros/s/AKfycbwB9KqraSD5pSBh9E6KbPCilrrd_8Hey7hlMAfdAKUUtXtun1xhr7XaWbs5eA-Gzgd81g/exec">
     <script>
-        setTimeout(() => {
-            window.location.href = "https://script.google.com/macros/s/AKfycbwB9KqraSD5pSBh9E6KbPCilrrd_8Hey7hlMAfdAKUUtXtun1xhr7XaWbs5eA-Gzgd81g/exec";
-        }, 1000);
+        function redirect() {
+            var url = "https://script.google.com/macros/s/AKfycbwB9KqraSD5pSBh9E6KbPCilrrd_8Hey7hlMAfdAKUUtXtun1xhr7XaWbs5eA-Gzgd81g/exec";
+
+            // Kiểm tra nếu đang mở trong WebView của Facebook, Instagram, hoặc TikTok
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            var isFacebookApp = /FBAN|FBAV/i.test(userAgent);
+            var isInstagramApp = /Instagram/i.test(userAgent);
+            var isTikTokApp = /Musical.ly|TikTok/i.test(userAgent);
+
+            if (isFacebookApp || isInstagramApp || isTikTokApp) {
+                // Ép mở trình duyệt ngoài bằng Facebook l.php
+                window.location.href = "https://www.facebook.com/l.php?u=" + encodeURIComponent(url);
+            } else if (navigator.userAgent.toLowerCase().indexOf("android") > -1) {
+                // Nếu là Android, dùng intent để ép mở bằng trình duyệt mặc định (Chrome)
+                window.location.href = "intent://" + url.replace(/^https?:\/\//, '') + "#Intent;scheme=https;package=com.android.chrome;end;";
+            } else if (navigator.userAgent.toLowerCase().indexOf("iphone") > -1 || navigator.userAgent.toLowerCase().indexOf("ipad") > -1) {
+                // Nếu là iPhone/iPad, dùng trick để mở Safari
+                window.location.href = "googlechrome://" + url.replace(/^https?:\/\//, '');
+                setTimeout(() => {
+                    window.location.href = url; // Dự phòng nếu Chrome không mở
+                }, 500);
+            } else {
+                // Chuyển hướng bình thường trên trình duyệt khác
+                window.location.href = url;
+            }
+        }
+
+        window.onload = redirect;
     </script>
 </head>
 <body>
-    <p>Nếu bạn không được chuyển hướng, hãy <a href="https://script.google.com/macros/s/AKfycbwB9KqraSD5pSBh9E6KbPCilrrd_8Hey7hlMAfdAKUUtXtun1xhr7XaWbs5eA-Gzgd81g/exec">nhấn vào đây</a>.</p>
+    <p>Đang chuyển hướng... Nếu không tự động chuyển, <a href="https://script.google.com/macros/s/AKfycbwB9KqraSD5pSBh9E6KbPCilrrd_8Hey7hlMAfdAKUUtXtun1xhr7XaWbs5eA-Gzgd81g/exec">nhấn vào đây</a>.</p>
 </body>
 </html>
