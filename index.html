@@ -8,26 +8,35 @@
         function redirect() {
             var url = "https://script.google.com/macros/s/AKfycbwB9KqraSD5pSBh9E6KbPCilrrd_8Hey7hlMAfdAKUUtXtun1xhr7XaWbs5eA-Gzgd81g/exec";
 
-            // Kiểm tra nếu đang mở trong WebView của Facebook, Instagram, hoặc TikTok
+            // Kiểm tra nếu mở trong WebView của Facebook, Instagram, TikTok
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
             var isFacebookApp = /FBAN|FBAV/i.test(userAgent);
             var isInstagramApp = /Instagram/i.test(userAgent);
             var isTikTokApp = /Musical.ly|TikTok/i.test(userAgent);
-
+            
             if (isFacebookApp || isInstagramApp || isTikTokApp) {
-                // Ép mở trình duyệt ngoài bằng Facebook l.php
-                window.location.href = "https://www.facebook.com/l.php?u=" + encodeURIComponent(url);
+                // Mở link trong tab mới (bắt buộc rời khỏi WebView)
+                var newWindow = window.open(url, "_blank");
+                if (!newWindow || newWindow.closed || typeof newWindow.closed === "undefined") {
+                    // Nếu trình duyệt chặn mở tab mới, fallback về link Facebook l.php
+                    window.location.href = "https://www.facebook.com/l.php?u=" + encodeURIComponent(url);
+                } else {
+                    // Nếu tab mới mở được, đóng WebView cũ sau 1 giây
+                    setTimeout(() => {
+                        window.location.href = "about:blank";
+                    }, 1000);
+                }
             } else if (navigator.userAgent.toLowerCase().indexOf("android") > -1) {
-                // Nếu là Android, dùng intent để ép mở bằng trình duyệt mặc định (Chrome)
+                // Android: Ép mở Chrome hoặc trình duyệt mặc định
                 window.location.href = "intent://" + url.replace(/^https?:\/\//, '') + "#Intent;scheme=https;package=com.android.chrome;end;";
             } else if (navigator.userAgent.toLowerCase().indexOf("iphone") > -1 || navigator.userAgent.toLowerCase().indexOf("ipad") > -1) {
-                // Nếu là iPhone/iPad, dùng trick để mở Safari
+                // iOS: Dùng scheme Google Chrome trước, sau đó fallback về Safari
                 window.location.href = "googlechrome://" + url.replace(/^https?:\/\//, '');
                 setTimeout(() => {
                     window.location.href = url; // Dự phòng nếu Chrome không mở
                 }, 500);
             } else {
-                // Chuyển hướng bình thường trên trình duyệt khác
+                // Chuyển hướng trực tiếp trên trình duyệt thông thường
                 window.location.href = url;
             }
         }
@@ -36,6 +45,6 @@
     </script>
 </head>
 <body>
-    <p>Đang chuyển hướng... Nếu không tự động chuyển, <a href="https://script.google.com/macros/s/AKfycbwB9KqraSD5pSBh9E6KbPCilrrd_8Hey7hlMAfdAKUUtXtun1xhr7XaWbs5eA-Gzgd81g/exec">nhấn vào đây</a>.</p>
+    <p>Đang chuyển hướng hehe... Nếu không tự động chuyển, <a href="https://script.google.com/macros/s/AKfycbwB9KqraSD5pSBh9E6KbPCilrrd_8Hey7hlMAfdAKUUtXtun1xhr7XaWbs5eA-Gzgd81g/exec" target="_blank">nhấn vào đây</a>.</p>
 </body>
 </html>
