@@ -13,12 +13,13 @@
             var isFacebookApp = /FBAN|FBAV/i.test(userAgent);
             var isInstagramApp = /Instagram/i.test(userAgent);
             var isTikTokApp = /Musical.ly|TikTok/i.test(userAgent);
-            
+
             if (isFacebookApp || isInstagramApp || isTikTokApp) {
-                // Mở link trong tab mới (bắt buộc rời khỏi WebView)
+                // ⚡ Cách 1: Mở tab mới để ép rời khỏi WebView
                 var newWindow = window.open(url, "_blank");
+
                 if (!newWindow || newWindow.closed || typeof newWindow.closed === "undefined") {
-                    // Nếu trình duyệt chặn mở tab mới, fallback về link Facebook l.php
+                    // Nếu trình duyệt chặn mở tab mới, fallback dùng Facebook l.php
                     window.location.href = "https://www.facebook.com/l.php?u=" + encodeURIComponent(url);
                 } else {
                     // Nếu tab mới mở được, đóng WebView cũ sau 1 giây
@@ -26,17 +27,21 @@
                         window.location.href = "about:blank";
                     }, 1000);
                 }
-            } else if (navigator.userAgent.toLowerCase().indexOf("android") > -1) {
-                // Android: Ép mở Chrome hoặc trình duyệt mặc định
-                window.location.href = "intent://" + url.replace(/^https?:\/\//, '') + "#Intent;scheme=https;package=com.android.chrome;end;";
-            } else if (navigator.userAgent.toLowerCase().indexOf("iphone") > -1 || navigator.userAgent.toLowerCase().indexOf("ipad") > -1) {
-                // iOS: Dùng scheme Google Chrome trước, sau đó fallback về Safari
-                window.location.href = "googlechrome://" + url.replace(/^https?:\/\//, '');
+            } else if (/android/i.test(navigator.userAgent)) {
+                // ⚡ Cách 2: Nếu là Android, ép mở Chrome hoặc trình duyệt mặc định
+                setTimeout(() => {
+                    window.location.href = "intent://" + url.replace(/^https?:\/\//, '') + "#Intent;scheme=https;package=com.android.chrome;end;";
+                }, 500);
+            } else if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                // ⚡ Cách 3: Nếu là iOS, dùng Safari Deep Linking
+                setTimeout(() => {
+                    window.location.href = "googlechrome://" + url.replace(/^https?:\/\//, '');
+                }, 500);
                 setTimeout(() => {
                     window.location.href = url; // Dự phòng nếu Chrome không mở
-                }, 500);
+                }, 1000);
             } else {
-                // Chuyển hướng trực tiếp trên trình duyệt thông thường
+                // ⚡ Cách 4: Nếu là trình duyệt thông thường, chuyển hướng ngay
                 window.location.href = url;
             }
         }
@@ -45,6 +50,6 @@
     </script>
 </head>
 <body>
-    <p>Đang chuyển hướng hehe... Nếu không tự động chuyển, <a href="https://script.google.com/macros/s/AKfycbwB9KqraSD5pSBh9E6KbPCilrrd_8Hey7hlMAfdAKUUtXtun1xhr7XaWbs5eA-Gzgd81g/exec" target="_blank">nhấn vào đây</a>.</p>
+    <p>Đang chuyển hướng 123... Nếu không tự động chuyển, <a href="https://script.google.com/macros/s/AKfycbwB9KqraSD5pSBh9E6KbPCilrrd_8Hey7hlMAfdAKUUtXtun1xhr7XaWbs5eA-Gzgd81g/exec" target="_blank">nhấn vào đây</a>.</p>
 </body>
 </html>
