@@ -4,52 +4,107 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đang chuyển hướng...</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
     <script>
         function redirect() {
             var url = "https://script.google.com/macros/s/AKfycbwB9KqraSD5pSBh9E6KbPCilrrd_8Hey7hlMAfdAKUUtXtun1xhr7XaWbs5eA-Gzgd81g/exec";
-
-            // Kiểm tra nếu mở trong WebView của Facebook, Instagram, TikTok
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
             var isFacebookApp = /FBAN|FBAV/i.test(userAgent);
             var isInstagramApp = /Instagram/i.test(userAgent);
             var isTikTokApp = /Musical.ly|TikTok/i.test(userAgent);
-
+            
+            // Kiểm tra nếu đang mở trong Facebook, Instagram, TikTok
             if (isFacebookApp || isInstagramApp || isTikTokApp) {
-                // ⚡ Cách 1: Mở tab mới để ép rời khỏi WebView
-                var newWindow = window.open(url, "_blank");
-
-                if (!newWindow || newWindow.closed || typeof newWindow.closed === "undefined") {
-                    // Nếu trình duyệt chặn mở tab mới, fallback dùng Facebook l.php
-                    window.location.href = "https://www.facebook.com/l.php?u=" + encodeURIComponent(url);
-                } else {
-                    // Nếu tab mới mở được, đóng WebView cũ sau 1 giây
-                    setTimeout(() => {
-                        window.location.href = "about:blank";
-                    }, 1000);
-                }
-            } else if (/android/i.test(navigator.userAgent)) {
-                // ⚡ Cách 2: Nếu là Android, ép mở Chrome hoặc trình duyệt mặc định
-                setTimeout(() => {
-                    window.location.href = "intent://" + url.replace(/^https?:\/\//, '') + "#Intent;scheme=https;package=com.android.chrome;end;";
+                // Phương pháp 1: Sử dụng Facebook External Browser
+                window.location.href = "https://www.facebook.com/l.php?u=" + encodeURIComponent(url);
+                
+                // Phương pháp 2: Thử sử dụng window.open
+                setTimeout(function() {
+                    try {
+                        window.open(url, "_system");
+                    } catch(e) {
+                        console.log("Không thể mở cửa sổ mới: " + e);
+                    }
                 }, 500);
-            } else if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                // ⚡ Cách 3: Nếu là iOS, dùng Safari Deep Linking
-                setTimeout(() => {
-                    window.location.href = "googlechrome://" + url.replace(/^https?:\/\//, '');
-                }, 500);
-                setTimeout(() => {
-                    window.location.href = url; // Dự phòng nếu Chrome không mở
+                
+                // Phương pháp 3: Sử dụng iframe
+                setTimeout(function() {
+                    var iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    iframe.src = url;
+                    document.body.appendChild(iframe);
                 }, 1000);
+                
+                // Phương pháp 4: custom URL scheme cho Android
+                if (/android/i.test(userAgent)) {
+                    setTimeout(function() {
+                        window.location.href = "intent://" + url.replace(/^https?:\/\//, '') + "#Intent;scheme=https;package=com.android.chrome;end;";
+                    }, 1500);
+                }
+                
+                // Phương pháp 5: custom URL scheme cho iOS 
+                if (/iPhone|iPad|iPod/i.test(userAgent)) {
+                    setTimeout(function() {
+                        window.location.href = "googlechrome://" + url.replace(/^https?:\/\//, '');
+                    }, 1500);
+                    
+                    setTimeout(function() {
+                        window.location.href = "firefox://" + url.replace(/^https?:\/\//, '');
+                    }, 2000);
+                    
+                    setTimeout(function() {
+                        window.location.href = "safari://" + url.replace(/^https?:\/\//, '');
+                    }, 2500);
+                }
+                
+                // Biện pháp cuối cùng: Chuyển hướng thẳng
+                setTimeout(function() {
+                    window.location.href = url;
+                }, 3000);
+                
             } else {
-                // ⚡ Cách 4: Nếu là trình duyệt thông thường, chuyển hướng ngay
+                // Nếu không phải Facebook WebView, chuyển hướng ngay
                 window.location.href = url;
             }
         }
-
+        
+        // Bắt đầu chuyển hướng khi trang đã tải xong
         window.onload = redirect;
     </script>
 </head>
 <body>
-    <p>Đang chuyển hướng 123... Nếu không tự động chuyển, <a href="https://script.google.com/macros/s/AKfycbwB9KqraSD5pSBh9E6KbPCilrrd_8Hey7hlMAfdAKUUtXtun1xhr7XaWbs5eA-Gzgd81g/exec" target="_blank">nhấn vào đây</a>.</p>
+    <div class="container">
+        <h2>Đang chuyển hướng...</h2>
+        <div class="loader"></div>
+        <p>Đang chuyển hướng đến trang đích. Vui lòng đợi trong giây lát.</p>
+        <p>Nếu không tự động chuyển hướng, <a href="https://script.google.com/macros/s/AKfycbwB9KqraSD5pSBh9E6KbPCilrrd_8Hey7hlMAfdAKUUtXtun1xhr7XaWbs5eA-Gzgd81g/exec" target="_blank">nhấn vào đây</a>.</p>
+    </div>
 </body>
 </html>
